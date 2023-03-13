@@ -26,7 +26,7 @@ class Jeux
     private ?string $Description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Iamge = null;
+    private ?string $Img = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: 1, nullable: true)]
     private ?string $Note = null;
@@ -83,14 +83,14 @@ class Jeux
         return $this;
     }
 
-    public function getIamge(): ?string
+    public function getImg(): ?string
     {
-        return $this->Iamge;
+        return $this->Img;
     }
 
-    public function setIamge(?string $Iamge): self
+    public function setImg(?string $Img): self
     {
-        $this->Iamge = $Iamge;
+        $this->Img = $Img;
 
         return $this;
     }
