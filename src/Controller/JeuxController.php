@@ -9,26 +9,25 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\JeuxRepository;
 use App\Entity\Jeux;
 
-
-
-class AccueilController extends AbstractController
+#[Route('/jeux', name: 'jeux_')]
+class JeuxController extends AbstractController
 {
-    #[Route('/accueil', name: 'accueil')]
+    #[Route('/', name: 'index')]
     public function index(JeuxRepository $JeuxRepository): Response
     {
         $lastJeux=$JeuxRepository->findLastJeux(10);
         //dd($lastJeux);
-        return $this->render('accueil/index.html.twig', [
+        return $this->render('jeux/index.html.twig', [
             'lastJeux' => $lastJeux,
         ]);
     }
 
-    #[Route('/accueil/{slug}', name: 'details')]
+    #[Route('/{slug}', name: 'details')]
     public function details(Jeux $Jeux): Response
     {
         //$title=$Jeux->getTitle();
         //dd($title);
-        return $this->render('accueil/details.html.twig', [
+        return $this->render('jeux/details.html.twig', [
             'jeux' => $Jeux,
         ]);
     }

@@ -22,12 +22,14 @@ class Avis
     #[ORM\Column]
     private ?bool $is_valid = null;
 
-    #[ORM\ManyToOne]
-    private ?Utilisateurs $users = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Jeux $jeux = null;
+    private ?Jeux $jeu = null;
+
+    #[ORM\ManyToOne(inversedBy: 'avis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateurs $utilisateur = null;
 
     public function getId(): ?int
     {
@@ -70,26 +72,28 @@ class Avis
         return $this;
     }
 
-    public function getUsers(): ?Utilisateurs
+
+
+    public function getJeu(): ?Jeux
     {
-        return $this->users;
+        return $this->jeu;
     }
 
-    public function setUsers(?Utilisateurs $users): self
+    public function setJeu(?Jeux $jeu): self
     {
-        $this->users = $users;
+        $this->jeu = $jeu;
 
         return $this;
     }
 
-    public function getJeux(): ?Jeux
+    public function getUtilisateur(): ?Utilisateurs
     {
-        return $this->jeux;
+        return $this->utilisateur;
     }
 
-    public function setJeux(?Jeux $jeux): self
+    public function setUtilisateur(?Utilisateurs $utilisateur): self
     {
-        $this->jeux = $jeux;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

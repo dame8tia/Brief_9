@@ -8,9 +8,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use App\Entity\Trait\SlugTrait;
+
 #[ORM\Entity(repositoryClass: JeuxRepository::class)]
 class Jeux
 {
+    use SlugTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,11 +26,11 @@ class Jeux
     #[ORM\Column(length: 255)]
     private ?string $Url = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $Description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Img = null;
+    private ?string $Image = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: 1, nullable: true)]
     private ?string $Note = null;
@@ -37,9 +41,13 @@ class Jeux
     #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'jeux')]
     private Collection $genres;
 
+    #[ORM\OneToMany(mappedBy: 'jeu', targetEntity: Avis::class)]
+    private Collection $avis;
+
     public function __construct()
     {
         $this->genres = new ArrayCollection();
+        $this->avis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,14 +91,14 @@ class Jeux
         return $this;
     }
 
-    public function getImg(): ?string
+    public function getImage(): ?string
     {
-        return $this->Img;
+        return $this->Image;
     }
 
-    public function setImg(?string $Img): self
+    public function setImage(?string $Image): self
     {
-        $this->Img = $Img;
+        $this->Image = $Image;
 
         return $this;
     }
@@ -141,6 +149,36 @@ class Jeux
     {
         if ($this->genres->removeElement($genre)) {
             $genre->removeJeux($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Avis>
+     */
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function addAvi(Avis $avi): self
+    {
+        if (!$this->avis->contains($avi)) {
+            $this->avis->add($avi);
+            $avi->setJeu($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvi(Avis $avi): self
+    {
+        if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
+            if ($avi->getJeu() === $this) {
+                $avi->setJeu(null);
+            }
         }
 
         return $this;

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Informations sur le jeu{% endblock %}
 
 {% block body %}
 <style>
@@ -8,23 +8,26 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-
-
 {% include "header.html.twig" %}
 
 <div class="container">
     <!-- Example row of columns -->
     <div class="row">
 
-        {% for jeu in lastJeux %}
+        <p> {{app.request.get('_route')}} </p>
+        
+        <p> {{app.request.attributes.get('_route')}} </p>
+        <p> {{app.request.pathinfo}}</p>
+        <p> {{app.request.uri}}</p>
+
+  
         <div class="col-md-3">
-            <a href= "{{app.request.uri ~ '/' ~ jeu.slug}}"><h2>{{jeu.title}}</h2></a>            
-            <img src="{{'/' ~ jeu.image}}" alt="" width="150px" height="150px">
-            <p> {{jeu.description}} </p>
-            <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            <h2>{{jeux.title}}</h2>         
+            <img src="{{'/' ~ jeux.image}}" alt="" width="150px" height="150px">
+            <p> {{jeux.description}} </p>
+            <p><a class="btn btn-secondary" href="#" role="button">Noter &raquo;</a></p>
         </div>
 
-        {% endfor %}
         
     </div>
 
@@ -32,8 +35,5 @@
 
     </div> <!-- /container -->
 
-
 {% include "footer.html.twig" %}
 {% endblock %}
-
-

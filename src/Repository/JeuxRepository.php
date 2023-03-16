@@ -41,8 +41,9 @@ class JeuxRepository extends ServiceEntityRepository
 
     public function findLastJeux(int $max=5)
     {
+
         return $this->createQueryBuilder('n')
-            ->orderBy('n.id', 'DESC')
+            ->orderBy('n.Date_sortie', 'DESC')
             ->setMaxResults($max)
             ->getQuery()
             ->getResult();
