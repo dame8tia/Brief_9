@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create : DashBoard admin{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<h1> Ajout d'un jeu</h1>
+
+<div class="row">
+    <div class="col">
+        <!-- Bouton Ajouter un favori : Lance un formulaire php : form_create.php -->
+        <a class="btn btn-primary mt-3" href=" {{path('console')}} " role="button">Revenir à la console Adminstrateur</a>
+    </div>
+</div>
+
+{# pass a string argument to get only the messages of that type #}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success mt-3">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{# form(form) ou form_start form_end #}
+{{ form_start(form) }}
+
+    <div class="form-group">
+        {{ form_label(form.Title) }}
+        {{ form_widget(form.Title) }}
+        <div class="form-error alert">
+            {{ form_errors(form.Title) }}
+        </div>
+    </div>
+
+
+    {% for genre in form.genres  %}
+    <div class="col">
+        {{ form_widget(genre) }}
+        <label for="">{{ form_label(genre) }}</label>
+        
+    </div>
+    {% endfor %}
+
+    <div class="form-group">
+        {{ form_label(form.Url) }}
+        {{ form_widget(form.Url) }}
+        <div class="form-error alert">
+            {{ form_errors(form.Url) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.Description) }}
+        {{ form_widget(form.Description) }}
+        <div class="form-error alert">
+            {{ form_errors(form.Description) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.Image) }}
+        {{ form_widget(form.Image) }}
+        <div class="form-error alert">
+            {{ form_errors(form.Image) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.Note) }}
+        {{ form_widget(form.Note) }}
+        <div class="form-error alert">
+            {{ form_errors(form.Note) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.Date_sortie) }}
+        {{ form_widget(form.Date_sortie) }}
+        <div class="form-error alert">
+            {{ form_errors(form.Date_sortie) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.Slug) }}
+        {{ form_widget(form.Slug) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_row(form.save) }}
+    </div>
+
+{{ form_end(form) }}
+
+
+
+
+
+</div>
+
+
+
+{% endblock %}
+

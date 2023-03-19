@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}DashBoard admin{% endblock %}
+
+{% block body %}
+
+<div class="container">
+  <h1>Console admin</h1>
+
+  {# pass a string argument to get only the messages of that type #}
+  {% for message in app.flashes('success') %}
+      <div class="alert alert-success mt-3">
+          {{ message }}
+      </div>
+  {% endfor %}
+
+  {% if not jeux.items is same as ([]) %} 
+    <div>
+      <div class="row">
+        <div class="col">
+          <!-- Bouton Ajouter un favori : Lance un formulaire php : form_create.php -->
+          <a class="btn btn-primary mt-3" href=" {{path('console.new')}} " role="button">Ajouter un jeu</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="count ">
+      <p>Nombre de jeux :{{ jeux.getTotalItemCount }}</p> 
+    </div>
+    
+    <table id="tab_favorite" class="table table-responsive table-striped overflow-auto table-hover table-bordered border-primary-subtle mt-5">
+    <caption style="caption-side:bottom">Liste des jeux présents dans la bdd </caption>
+        <thead>
+            <tr>
+                <th{% if jeux.isSorted('Title') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(jeux, 'Title', 'a.title', {}, {'direction': 'asc'}) }}
+                </th>
+                <th scope="col">Genre</th> 
+                <th scope="col">Url</th>                
+                <th scope="col" span="3">Description</th>
+                <th scope="col">Note (/5)</th>
+                <th scope="col">Date de sortie</th>
+                <th scope="col">Image</th>
+                <th scope="col">Slug</th>
+                <th scope="col">Modifier</th>
+                <th scope="col">Supprimer</th>
+            </tr>
+        </thead>    
+        
+        <tbody class="table-group-divider">
+              {% for ligne in jeux %}
+            <tr>
+                <th scope="row"> {{ ligne.title }} </th>
+                <td>
+                  {% for genre in ligne.genres  %}
+                    <div class="col">
+                      <input type="checkbox" checked >
+                      <label for="">{{ genre }}</label>
+                    </div>
+                  {% endfor %}
+                </td>
+                <td>{{ ligne.url }}</td>
+                <td span="3">{{ ligne.description }}</td>       
+                <td>{{ (ligne.note == 0.0) ? 'Non noté': ligne.note }}</td>
+
+                <td> {{ ligne.dateSortie |date('d-m-Y')}}</td>
+                <td> <img src="{{ ligne.image }}" width="150px" height="150px"> </td>
+                <td> {{ ligne.slug}}</td>
+                <td>
+                <a href=" {{ path('console.edit', {slug: ligne.slug}) }} " class="btn btn-info">Modifier</a>
+                </td>
+                <td>
+                <a href=" {{ path('console.delete', {slug: ligne.slug}) }} " class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>       
+    </table>
+  {# display navigation #}
+    <div class="navigation d-flex justify-content-center mt-3">
+        {{ knp_pagination_render(jeux) }}
+    </div>
+  {% else %} 
+  <p> Il n'y a aucun jeu de référencés dans la base de données</p>
+  {% endif %} 
+
+</div>
+{% endblock %}

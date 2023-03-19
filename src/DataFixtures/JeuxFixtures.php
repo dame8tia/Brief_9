@@ -9,6 +9,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class JeuxFixtures extends Fixture
 {
+    private $count=1;
 
     public function __construct(private sluggerInterface $slugger){}
 
@@ -51,10 +52,18 @@ class JeuxFixtures extends Fixture
         $slug = $this->slugger->slug($jeu->getTitle())->lower();
         $jeu->setSlug($slug);
 
+        //fk Jeu
+        //$genre = $this->getReference('Genre-'.rand(1,14));
+        //$genre->addGenre($genre);
+
         $manager->persist($jeu);
+
+        $this->addReference('Jeu-'.$this->count, $jeu);
+        $this->count++;
 
         return $jeu;
 
-
     }
+
+    
 }
