@@ -8,36 +8,36 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 
+use App\Repository\AvisRepository;
+use App\Entity\Avis;
+use App\Form\AvisType;
 use App\Repository\JeuxRepository;
-use App\Repository\GenreRepository;
-use App\Entity\Jeux;
-use App\Form\CrudType;
 use Knp\Component\Pager\PaginatorInterface;
 
-class CrudController extends AbstractController
+class AvisUtilController extends AbstractController
 {
     /**
-     * @param JeuxRepository $jeuxRepository
+     * @param AvisRepository $avisRepository
      * @param PaginatorInterface $paginator
      * @param Request $request
      * @return Response
      * 
      * This function displays all video play
      */
-    #[Route('/console', name: 'console', methods:['GET'])]
-    public function index(JeuxRepository $jeuxRepository, PaginatorInterface $paginator, Request $request): Response
+    #[Route('/avis', name: 'avis', methods:['GET'])]
+    public function index(AvisRepository $avisRepository, PaginatorInterface $paginator, Request $request): Response
     {    
-        $jeux = $paginator->paginate(
-            $jeuxRepository->findAll(), /* query NOT result */
+        $avis = $paginator->paginate(
+            $avisRepository->findAll(), /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             5 /*limit per page*/
         );
 
-        //dd($jeux);
+        //dd($avis);
 
-        return $this->render('crud/index.html.twig', 
+        return $this->render('avis/index.html.twig', 
             [
-                'jeux'=>$jeux,
+                'avis'=>$avis,
             ]);
     }
 
@@ -48,44 +48,41 @@ class CrudController extends AbstractController
      * 
      * This function to insert a new video play
      */
-    #[Route('/console/nouveau', name: 'console.new', methods:['GET', 'POST'])]
+    #[Route('/avis/nouveau/{slug}', name: 'avis.new', methods:['GET', 'POST'])]
     public function new(
         Request $request,
         EntityManagerInterface $manager,
-        GenreRepository $genreRepository
+        JeuxRepository $jeuRepository,
+        $slug, 
         ): Response
     {
-        $jeu = new Jeux;
-        $genres = $genreRepository->findAll();
-        $form = $this->createForm(CrudType:: class, $jeu);
+        $avis = new Avis;
+        $jeu = $jeuRepository->findOneBy(['slug' => $slug]);
+        $form = $this->createForm(AvisType:: class, $avis);
         $form->handleRequest($request);
-        
+        //dd($form);
         if ($form->isSubmitted() && $form->isValid()){
-            $jeu = $form->getData();
-            $tabGenreId = $form->get('genres')->getData();
+            $avis = $form->getData();
+            $avis->setJeu($jeu);
+            $avis->setUtilisateur('utilisateur');
+            //$manager->persist($jeu);
 
-            foreach($tabGenreId as $genre){
-                $g = $genreRepository->find(array('id' => $genre));
-                $jeu->addGenre($g);
-                $manager->persist($g);
-            }
-
-            $manager->persist($jeu);
+            $manager->persist($avis);
             $manager->flush();
 
             $this->addFlash(
                 'success',
-                'Le jeu a bien été ajouté'
+                'L\'avis a bien été ajouté'
             );
 
-            return $this->redirectToRoute('console');
+            return $this->redirectToRoute('avis');
 
         }
         else {
             //
         }
 
-        return $this->render('crud/new.html.twig',
+        return $this->render('avis/new.html.twig',
             [
                 'form' => $form->createView(),
             ]
@@ -100,18 +97,15 @@ class CrudController extends AbstractController
      * 
      * This function to update a video play
      */
-    #[Route('/console/edition/{slug}', name: 'console.edit', methods:['GET', 'POST'])]
+    #[Route('/avis/edition/{id}', name: 'avis.edit', methods:['GET', 'POST'])]
     public function edit(
-        //JeuxRepository $jeuxRepository, // on utilise paramConverter
-        Jeux $jeu,//string $slug,
+        Avis $avis,
         Request $request,
         EntityManagerInterface $manager
         ): Response 
     {
-        
-        //$jeu = $jeuxRepository->findOneBy(['slug' => $slug])
 
-        $form = $this->createForm(CrudType:: class, $jeu);
+        $form = $this->createForm(AvisType:: class, $avis);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()){
@@ -123,7 +117,7 @@ class CrudController extends AbstractController
 
             $this->addFlash(
                 'success',
-                'Le jeu a bien été modifié'
+                'L\'avis a bien été modifié'
             );
 
             return $this->redirectToRoute('console');
@@ -132,7 +126,7 @@ class CrudController extends AbstractController
             // A faire
         }
 
-        return $this->render('crud/update.html.twig',
+        return $this->render('avis/update.html.twig',
             [
                 'form' => $form->createView(),
             ]
@@ -146,19 +140,19 @@ class CrudController extends AbstractController
      * 
      * This function to update a video play
      */
-    #[Route('/console/suppression/{slug}', name: 'console.delete', methods:['GET'])]
+    #[Route('/avis/suppression/{id}', name: 'avis.delete', methods:['GET'])]
     public function delete(
-        Jeux $jeu,
+        Avis $avis,
         EntityManagerInterface $manager):Response
     {
-        $manager->remove($jeu);
+        $manager->remove($avis);
         $manager->flush();
 
         $this->addFlash(
             'success',
-            'Le jeu a bien été supprimé'
+            'L\'avis a bien été supprimé'
         );
-        return $this->redirectToRoute('console');//, ['page'=>app.knp.pagination]
+        return $this->redirectToRoute('avis');
     }
     
 }

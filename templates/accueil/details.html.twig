@@ -14,18 +14,19 @@
     <!-- Example row of columns -->
     <div class="row">
 
-        <p> {{app.request.get('_route')}} </p>
+{#         <p> {{app.request.get('_route')}} </p>
         
         <p> {{app.request.attributes.get('_route')}} </p>
         <p> {{app.request.pathinfo}}</p>
-        <p> {{app.request.uri}}</p>
+        <p> {{app.request.uri}}</p> #}
 
   
         <div class="col-md-3">
             <h2>{{jeux.title}}</h2>         
             <img src="{{'/' ~ jeux.image}}" alt="" width="150px" height="150px">
             <p> {{jeux.description}} </p>
-            <p><a class="btn btn-secondary" href="#" role="button">Noter &raquo;</a></p>
+            {# <p><a class="btn btn-secondary" href=" {{ path('add_favori', {slug: jeux.slug}) }} " role="button">Noter &raquo;</a></p> #}
+            <p><a class="btn btn-secondary" href=" {{ path('avis.new', {slug: jeux.slug}) }} " role="button">Noter &raquo;</a></p>
         </div>
 
         

@@ -38,7 +38,9 @@ class Jeux
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeImmutable $Date_sortie = null;
 
-    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'jeux')]
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'jeux')]
+    //@JoinTable(name="genre_jeux")// Mauvaise choix lors de la crétaion make:entity // devrait s'appeler Jeux_genre
+    #[ORM\JoinTable(name:"genre_jeux")]// Mauvaise choix lors de la crétaion make:entity // devrait s'appeler Jeux_genre
     private Collection $genres;
 
     #[ORM\OneToMany(mappedBy: 'jeu', targetEntity: Avis::class)]
@@ -48,6 +50,11 @@ class Jeux
     {
         $this->genres = new ArrayCollection();
         $this->avis = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->Title;
     }
 
     public function getId(): ?int

@@ -22,7 +22,7 @@ class Genre
     #[ORM\Column(length: 100)]
     private ?string $title = null;
 
-    #[ORM\ManyToMany(targetEntity: Jeux::class, inversedBy: 'genres')]
+    #[ORM\ManyToMany(targetEntity: Jeux::class, mappedBy: 'genres')]
     private Collection $jeux;
 
     public function __construct()

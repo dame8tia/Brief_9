@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Avis{% endblock %}
 
 {% block body %}
 <style>
@@ -16,12 +16,14 @@
     <!-- Example row of columns -->
     <div class="row">
 
-        {% for jeu in lastJeux %}
+        {% for ligne in avis %}
         <div class="col-md-3">
-            <a href= "{{app.request.uri ~ '/' ~ jeu.slug}}"><h2>{{jeu.title}}</h2></a>            
-            <img src="{{'/' ~ jeu.image}}" alt="" width="150px" height="150px">
-            <p> {{jeu.description}} </p>
-            <p><a class="btn btn-secondary" href="{{app.request.uri ~ '/' ~ jeu.slug}}" role="button">voir &raquo;</a></p>
+            {# <a href= "{{app.request.uri ~ '/' ~ ligne.slug}}"><h2>{{ligne.title}}</h2></a>             #}
+            <p> {{ligne.commentaire}} </p>
+            <p> {{ligne.note}} </p>
+            <p> {{ligne.is_valid}} </p>
+            <a href=" {{ path('avis.edit', {id: ligne.id}) }} " class="btn btn-info">Modifier</a>
+            <a href=" {{ path('avis.delete', {id: ligne.id}) }} " class="btn btn-info">Supprimer</a>
         </div>
 
         {% endfor %}
