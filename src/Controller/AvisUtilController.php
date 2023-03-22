@@ -7,15 +7,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
-
 use App\Repository\AvisRepository;
 use App\Entity\Avis;
 use App\Form\AvisType;
 use App\Repository\JeuxRepository;
+use App\Repository\UtilisateursRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+//use Doctrine\ORM\Mapping\Id;
 use Knp\Component\Pager\PaginatorInterface;
 
 class AvisUtilController extends AbstractController
 {
+    
     /**
      * @param AvisRepository $avisRepository
      * @param PaginatorInterface $paginator
@@ -24,16 +27,19 @@ class AvisUtilController extends AbstractController
      * 
      * This function displays all video play
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/avis', name: 'avis', methods:['GET'])]
-    public function index(AvisRepository $avisRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(
+        AvisRepository $avisRepository
+        , PaginatorInterface $paginator
+        , Request $request
+        ): Response
     {    
         $avis = $paginator->paginate(
             $avisRepository->findAll(), /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
-            5 /*limit per page*/
+            8 /*limit per page*/
         );
-
-        //dd($avis);
 
         return $this->render('avis/index.html.twig', 
             [
@@ -44,36 +50,47 @@ class AvisUtilController extends AbstractController
     /**
      * @param EntityManagerInterface $manager
      * @param Request $request
+     * @param JeuxRepository $jeuRepository
+     * @param UtilisateursRepository $utilRepo
      * @return Response
      * 
-     * This function to insert a new video play
+     * This function to insert a new notification about video play
      */
+
+    #[IsGranted('ROLE_USER')]
     #[Route('/avis/nouveau/{slug}', name: 'avis.new', methods:['GET', 'POST'])]
     public function new(
         Request $request,
         EntityManagerInterface $manager,
         JeuxRepository $jeuRepository,
+        UtilisateursRepository $utilRepo,
         $slug, 
         ): Response
     {
         $avis = new Avis;
+        
         $jeu = $jeuRepository->findOneBy(['slug' => $slug]);
+        $avis->setJeu($jeu);
+        $user = $utilRepo->findOneBy(['pseudo' => 'Utilisateur']);// Récupérer la variable app.user
+        $avis->setUtilisateur($user);
+        $avis->setIs_Valid(1);
+        // Rajouter une contrainte d'unicité sur user/Jeu.
+    
+        // On récupére le slug et l'utilisateur avant de créer le formulaire.
         $form = $this->createForm(AvisType:: class, $avis);
         $form->handleRequest($request);
-        //dd($form);
+
+
         if ($form->isSubmitted() && $form->isValid()){
             $avis = $form->getData();
-            $avis->setJeu($jeu);
-            $avis->setUtilisateur('utilisateur');
-            //$manager->persist($jeu);
 
             $manager->persist($avis);
             $manager->flush();
 
-            $this->addFlash(
+/*             $this->addFlash(
                 'success',
                 'L\'avis a bien été ajouté'
-            );
+            ); */
 
             return $this->redirectToRoute('avis');
 
@@ -82,9 +99,12 @@ class AvisUtilController extends AbstractController
             //
         }
 
+        $titleJeu = $jeu->getTitle();
+
         return $this->render('avis/new.html.twig',
             [
                 'form' => $form->createView(),
+                'titleJeu' => $titleJeu
             ]
         );
     }
@@ -97,22 +117,27 @@ class AvisUtilController extends AbstractController
      * 
      * This function to update a video play
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/avis/edition/{id}', name: 'avis.edit', methods:['GET', 'POST'])]
     public function edit(
         Avis $avis,
         Request $request,
-        EntityManagerInterface $manager
+        EntityManagerInterface $manager, 
+        jeuxRepository $jeuxRepository,
         ): Response 
     {
-
         $form = $this->createForm(AvisType:: class, $avis);
         $form->handleRequest($request);
+        $JeuAvis = $avis->getJeu();
+
+        $jeu = $jeuxRepository->findOneBy(['id' => $JeuAvis]);
+        $titleJeu = $jeu->getTitle();
 
         if ($form->isSubmitted() && $form->isValid()){
-            //dd($form->getData());
-            $jeu = $form->getData();
 
-            $manager->persist($jeu);
+            $avis = $form->getData();
+            
+            $manager->persist($avis);
             $manager->flush();
 
             $this->addFlash(
@@ -120,7 +145,7 @@ class AvisUtilController extends AbstractController
                 'L\'avis a bien été modifié'
             );
 
-            return $this->redirectToRoute('console');
+            return $this->redirectToRoute('avis');
         }
         else {
             // A faire
@@ -129,6 +154,7 @@ class AvisUtilController extends AbstractController
         return $this->render('avis/update.html.twig',
             [
                 'form' => $form->createView(),
+                'title' => $titleJeu
             ]
         );
     }
@@ -140,6 +166,7 @@ class AvisUtilController extends AbstractController
      * 
      * This function to update a video play
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/avis/suppression/{id}', name: 'avis.delete', methods:['GET'])]
     public function delete(
         Avis $avis,

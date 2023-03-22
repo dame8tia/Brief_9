@@ -9,12 +9,40 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1>Mes favoris</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/laetiti/Desktop/Form_MENDE_2022/2023_Symfony/Brief_9/src/Controller/FavoriController.php'|file_link(0) }}">src/Controller/FavoriController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/laetiti/Desktop/Form_MENDE_2022/2023_Symfony/Brief_9/templates/favori/index.html.twig'|file_link(0) }}">templates/favori/index.html.twig</a></code></li>
-    </ul>
+    dump(dataPanier);
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Lien Site officiel</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for jeu in dataPanier %}
+                <tr>
+                    <td>{{ jeu.Title }}</td>
+                    <td class="text-end">{{ jeu.Description }}</td>
+                    <td>{{ jeu.Image }}</td>
+                    <td>{{ jeu.Url }}</td>
+                    <td>
+                        <a href="{{path("cart_delete", {id: jeu.id})}}" class="btn btn-danger">
+                            <i class="bi bi-cart-x"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucun favori</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </div>
 {% endblock %}

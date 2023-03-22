@@ -5,23 +5,20 @@
 {% block body %}
 
 <div class="container">
-<h1> Ajout d'un avis</h1>
+<h1> Ajout d'un avis -Jeu :  {{ titleJeu }}</h1>
+
+{#     <div class="col">
+        {{ form_widget(form.jeu) }}
+        <label for="">{{ form_label(form.jeu) }}</label>        
+    </div> #}
 
 <div class="row">
     <div class="col">
         <!-- Bouton Ajouter un favori : Lance un formulaire php : form_create.php -->
-        <a class="btn btn-primary mt-3" href=" {{path('avis')}} " role="button">Revenir à la liste des avis</a>
+        <a class="btn btn-primary my-3" href=" {{path('avis')}} " role="button">Revenir à la liste des avis</a>
     </div>
 </div>
 
-{# pass a string argument to get only the messages of that type #}
-{% for message in app.flashes('success') %}
-    <div class="alert alert-success mt-3">
-        {{ message }}
-    </div>
-{% endfor %}
-
-{# form(form) ou form_start form_end #}
 {{ form_start(form) }}
 
     <div class="form-group">
@@ -32,12 +29,6 @@
         </div>
     </div>
 
-
-    {# <div class="col">
-        {{ form_widget(jeu) }}
-        <label for="">{{ form_label(jeu) }}</label>        
-    </div>
- #}
     <div class="form-group">
         {{ form_label(form.Note) }}
         {{ form_widget(form.Note) }}
@@ -52,13 +43,9 @@
 
 {{ form_end(form) }}
 
-
-
-
+<a href=" {{ path('app_favori', {id: ligne.jeu.slug}) }} " class="btn btn-info">Ajouter au favori</a>
 
 </div>
-
-
 
 {% endblock %}
 

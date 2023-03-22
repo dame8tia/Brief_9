@@ -3,9 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\AvisRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
+#[UniqueEntity(
+    fields: ['utilisateur', 'jeu'],
+    errorPath: 'utilisateur',
+    message: 'Un avis a déjà été donné sur ce jeu par vous.'
+)]
+
 class Avis
 {
     #[ORM\Id]
@@ -60,19 +68,17 @@ class Avis
         return $this;
     }
 
-    public function isIsValid(): ?bool
+    public function isis_Valid(): ?bool
     {
         return $this->is_valid;
     }
 
-    public function setIsValid(bool $is_valid): self
+    public function setis_Valid(bool $is_valid): self
     {
         $this->is_valid = $is_valid;
 
         return $this;
     }
-
-
 
     public function getJeu(): ?Jeux
     {

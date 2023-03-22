@@ -16,17 +16,24 @@
     <!-- Example row of columns -->
     <div class="row">
 
-        {% for ligne in avis %}
-        <div class="col-md-3">
-            {# <a href= "{{app.request.uri ~ '/' ~ ligne.slug}}"><h2>{{ligne.title}}</h2></a>             #}
-            <p> {{ligne.commentaire}} </p>
-            <p> {{ligne.note}} </p>
-            <p> {{ligne.is_valid}} </p>
-            <a href=" {{ path('avis.edit', {id: ligne.id}) }} " class="btn btn-info">Modifier</a>
-            <a href=" {{ path('avis.delete', {id: ligne.id}) }} " class="btn btn-info">Supprimer</a>
-        </div>
+    <h1>Mes avis</h1>
 
+        {% for ligne in avis %}
+        <div class="col-md-3 mt-3 border border-primary p-3 m-3">
+            {# <a href= "{{app.request.uri ~ '/' ~ ligne.slug}}"><h2>{{ligne.title}}</h2></a>             #}
+            <img src="{{'/' ~ ligne.jeu.image}}" alt="" width="150px" height="150px">
+            <p> Commentaire : {{ligne.commentaire}} </p>
+            <p> Note : {{ligne.note}} </p>
+            {# <p> {{ligne.is_valid}} </p> #}
+            <a href=" {{ path('avis.edit', {id: ligne.id}) }} " class="btn btn-info my-3">Modifier</a>
+            <a href=" {{ path('avis.delete', {id: ligne.id}) }} " class="btn btn-info">Supprimer</a>
+            <a href=" {{ path('add_favori', {slug: ligne.jeu.slug}) }} " class="btn btn-info mt-3">Ajouter au favori</a>
+        </div>
         {% endfor %}
+
+        <div class="navigation d-flex justify-content-center mt-3">
+            {{ knp_pagination_render(avis) }}
+        </div>
         
     </div>
 
