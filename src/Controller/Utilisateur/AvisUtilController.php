@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Utilisateur;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,15 +13,44 @@ use App\Form\AvisType;
 use App\Repository\JeuxRepository;
 use App\Repository\UtilisateursRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Core\User\UserInterface;
 //use Doctrine\ORM\Mapping\Id;
 use Knp\Component\Pager\PaginatorInterface;
 
 class AvisUtilController extends AbstractController
 {
-    
+    #[Route('/avis/{slug}', name: 'avis.tous', methods:['GET'])]
+    public function index_tous(
+        AvisRepository $avisRepository
+        , PaginatorInterface $paginator
+        , JeuxRepository $jeuRepository
+        , Request $request
+        , $slug
+        ): Response
+    {    
+
+        $jeu = $jeuRepository->findOneBy(['slug' => $slug]);
+        //dd($jeu);
+        $titleJeu = $jeu->getTitle();
+        $avis = $paginator->paginate(
+            $avis = $avisRepository->findBy(['jeu'=>$jeu]), /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            8 /*limit per page*/
+        );
+
+        return $this->render('avis/index.html.twig', 
+            [
+                'avis'=>$avis,
+                'avisJeu' =>$titleJeu
+                
+            ]);
+    }
+
     /**
      * @param AvisRepository $avisRepository
      * @param PaginatorInterface $paginator
+     * @param UtilisateursRepository $utilRepo
+     * @param UserInterface $user
      * @param Request $request
      * @return Response
      * 
@@ -31,12 +60,25 @@ class AvisUtilController extends AbstractController
     #[Route('/avis', name: 'avis', methods:['GET'])]
     public function index(
         AvisRepository $avisRepository
+        , UtilisateursRepository $utilRepo
         , PaginatorInterface $paginator
         , Request $request
+        , UserInterface $user
         ): Response
     {    
+
+        // On récupère le pseudo de l'utilisateur connecté
+        $idUserConnected = $user->getUserIdentifier(); // le mail
+        $userEntity = $utilRepo->findOneBy(['email' => $idUserConnected]);
+        
+
+        $user = $userEntity->getId();
+        
+        $tousMesAvis = $avisRepository->findBy(['utilisateur'=>$user]);
+        //dd($tousMesAvis);
+
         $avis = $paginator->paginate(
-            $avisRepository->findAll(), /* query NOT result */
+            $tousMesAvis, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             8 /*limit per page*/
         );
@@ -44,6 +86,7 @@ class AvisUtilController extends AbstractController
         return $this->render('avis/index.html.twig', 
             [
                 'avis'=>$avis,
+                'AvisJeu' =>""
             ]);
     }
 
@@ -52,6 +95,7 @@ class AvisUtilController extends AbstractController
      * @param Request $request
      * @param JeuxRepository $jeuRepository
      * @param UtilisateursRepository $utilRepo
+     * @param UserInterface $user
      * @return Response
      * 
      * This function to insert a new notification about video play
@@ -64,23 +108,54 @@ class AvisUtilController extends AbstractController
         EntityManagerInterface $manager,
         JeuxRepository $jeuRepository,
         UtilisateursRepository $utilRepo,
+        AvisRepository $AvisRepository,
+        UserInterface $user,
         $slug, 
         ): Response
     {
         $avis = new Avis;
-        
+
+        // on récupère le jeu sur lequel un avis est donnée
         $jeu = $jeuRepository->findOneBy(['slug' => $slug]);
+
+        // Récupération des avis existants
+        $tousAvis = $AvisRepository->findAll();
+
+        // On récupère le pseudo de l'utilisateur connecté
+        $idUserConnected = $user->getUserIdentifier(); // le mail
+        $userEntity = $utilRepo->findOneBy(['email' => $idUserConnected]);
+        $pseudo = $userEntity->getPseudo();
+
+        $existant = false;
+        // On vérifie si un avis à déjà été déposé par cet utilisateur
+        foreach ($tousAvis as $key => $value){
+            $pseudoAvisExistant = $value->getUtilisateur()->getPseudo();            
+            if ($pseudoAvisExistant == $pseudo)
+            {
+                $jeuAvisExistant = $value->getJeu()->getTitle();
+                $jeuAvisEnCours = $jeu->getTitle();
+                if( $jeuAvisExistant == $jeuAvisEnCours){
+                    $existant = true;
+                    $this->addFlash(
+                        'fail',
+                        'Vous avez déjà donné votre avis sur ce jeu. Vous pouvez le modifier'
+                    );
+                    return $this->redirectToRoute('avis');
+                }
+                else { continue ;}                
+            }
+            else {continue ;}
+        }
+
+        // on envoie les mes informations connues, l'utilisateur, 
         $avis->setJeu($jeu);
-        $user = $utilRepo->findOneBy(['pseudo' => 'Utilisateur']);// Récupérer la variable app.user
         $avis->setUtilisateur($user);
         $avis->setIs_Valid(1);
-        // Rajouter une contrainte d'unicité sur user/Jeu.
+        // Rajouter une contrainte d'unicité sur user/Jeu : Fait depuis Avis.php
     
-        // On récupére le slug et l'utilisateur avant de créer le formulaire.
         $form = $this->createForm(AvisType:: class, $avis);
         $form->handleRequest($request);
-
-
+        
         if ($form->isSubmitted() && $form->isValid()){
             $avis = $form->getData();
 
@@ -95,16 +170,16 @@ class AvisUtilController extends AbstractController
             return $this->redirectToRoute('avis');
 
         }
-        else {
-            //
-        }
 
         $titleJeu = $jeu->getTitle();
+        $slug = $jeu->getSlug();
 
         return $this->render('avis/new.html.twig',
             [
                 'form' => $form->createView(),
-                'titleJeu' => $titleJeu
+                'titleJeu' => $titleJeu,
+                'slug'=>$slug,
+                'existant' => $existant
             ]
         );
     }
@@ -158,6 +233,7 @@ class AvisUtilController extends AbstractController
             ]
         );
     }
+
 
     /**
      * 

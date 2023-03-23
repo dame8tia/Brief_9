@@ -33,14 +33,17 @@
           {# is_granted("ROLE_ADMIN") #}
             {% if app.user.roles[0] == "ROLE_ADMIN"%}
               <li class="nav-item">
-                <a class="nav-link" href="#">Dashboard</a>
+                <a class="nav-link" href="{{ path('console') }}">Dashboard</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_logout') }}">Me déconnecter</a>
               </li>
             {% else %}
               <li class="nav-item">
-                <a class="nav-link" href="#">Mes favoris</a>
+                <a class="nav-link" href="{{ path('avis') }}">Mes avis</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ path('favori') }}">Mes favoris</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_logout') }}">Me déconnecter</a>

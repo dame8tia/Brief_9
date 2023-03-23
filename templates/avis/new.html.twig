@@ -4,8 +4,10 @@
 
 {% block body %}
 
+{% include "header.html.twig" %}
+
 <div class="container">
-<h1> Ajout d'un avis -Jeu :  {{ titleJeu }}</h1>
+<h1> Ajout d'un avis - Jeu :  {{ titleJeu }}</h1>
 
 {#     <div class="col">
         {{ form_widget(form.jeu) }}
@@ -19,7 +21,17 @@
     </div>
 </div>
 
+
+{# {% for message in app.flashes('fail') %}
+    <div class="alert alert-alert mt-3">
+        {{ message }}
+    </div>
+{% else %} #}
+
 {{ form_start(form) }}
+
+
+{# {{ dump(form) }} #}
 
     <div class="form-group">
         {{ form_label(form.Commentaire) }}
@@ -43,9 +55,12 @@
 
 {{ form_end(form) }}
 
-<a href=" {{ path('app_favori', {id: ligne.jeu.slug}) }} " class="btn btn-info">Ajouter au favori</a>
+{# Le btn n'est plus pertinent. Parce que 'lutilisateur est obligé d'enregistrer et l'enregistrement le redirige vers sa liste des avis #}
+{# <a href=" {{ path('favori', {id: slug}) }} " class="btn btn-info">Ajouter au favori</a> #}
 
 </div>
+
+{# {% endfor %} #}
 
 {% endblock %}
 

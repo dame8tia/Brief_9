@@ -21,7 +21,8 @@
             <a href= "{{app.request.uri ~ '/' ~ jeu.slug}}"><h2>{{jeu.title}}</h2></a>            
             <img src="{{'/' ~ jeu.image}}" alt="" width="150px" height="150px">
             <p> {{jeu.description}} </p>
-            <p><a class="btn btn-secondary" href="{{app.request.uri ~ '/' ~ jeu.slug}}" role="button">voir &raquo;</a></p>
+            <p><a class="btn btn-secondary" href="{{app.request.uri ~ '/' ~ jeu.slug}}" role="button">voir</a></p>
+            <p><a class="btn btn-dark" href="{{ path('avis.tous', {slug: jeu.slug}) }}" role="button">voir tous les avis&raquo;</a></p>
         </div>
 
         {% endfor %}

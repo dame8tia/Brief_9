@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Utilisateur;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 use App\Repository\JeuxRepository;
 use App\Entity\Jeux;
@@ -13,6 +14,7 @@ use App\Entity\Jeux;
 class FavoriController extends AbstractController
 {
     #[Route('/favori', name: 'favori')]
+    #[IsGranted('ROLE_USER')]
     public function index(SessionInterface $session, JeuxRepository $jeuxRepository): Response
     {
         $panier = $session->get("favori", []);
@@ -30,7 +32,8 @@ class FavoriController extends AbstractController
     }
 
     #[Route('/favori/{slug}', name: 'add_favori')]
-    public function add($slug, SessionInterface $session, jeuxRepository $jeuxRepository, Jeux $jeu): Response
+    #[IsGranted('ROLE_USER')]
+    public function add($slug, SessionInterface $session, Jeux $jeu): Response
     {
         $slug = $jeu->getSlug();// permet de vérifier que le slug existe bien. On pourrait s'en passer
         $favoris = [];   
@@ -50,5 +53,25 @@ class FavoriController extends AbstractController
         }
 
         return $this->redirectToRoute('favori');
+    }
+
+    #[Route('/favori/delete/{slug}', name: 'delete_favori')]
+    #[IsGranted('ROLE_USER')]
+    public function delete($slug, SessionInterface $session, Jeux $jeu)
+    {
+        // On récupère le panier actuel
+        $favoris = $session->get("favori", []);
+        
+        foreach ($favoris as $key => $value){
+            //dd($value, $key);
+            if ($value == $slug){
+                unset($favoris[$key]);
+            }
+        }
+
+        // On sauvegarde dans la session
+        $session->set("favori", $favoris);
+
+        return $this->redirectToRoute("favori");
     }
 }

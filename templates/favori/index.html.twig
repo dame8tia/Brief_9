@@ -1,41 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FavoriController!{% endblock %}
+{% block title %}Favori{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
+{% include "header.html.twig" %}
+
+<div class="container">
+
+<div class="row">
+
     <h1>Mes favoris</h1>
 
-    dump(dataPanier);
+    {# {{dump()}} #}
 
-    <table class="table">
+    {% if not dataPanier is same as ([]) %} 
+
+    <table class="table" style="width:110%">
         <thead>
             <tr>
-                <th>Titre</th>
-                <th>Description</th>
-                <th>Image</th>
-                <th>Lien Site officiel</th>
-                <th>Action</th>
+                <td>Titre</td>
+                <td span="2">Description</td>
+                <td>Image</td>
+                <td>Lien Site officiel</td>
+                <td>Action</td>
             </tr>
         </thead>
         <tbody>
-            {% for jeu in dataPanier %}
-                <tr>
-                    <td>{{ jeu.Title }}</td>
-                    <td class="text-end">{{ jeu.Description }}</td>
-                    <td>{{ jeu.Image }}</td>
-                    <td>{{ jeu.Url }}</td>
+            {% for element in dataPanier %} {# ici element correspond à la variable $jeu qui est une requête sur le repo (fournit dans le controller FavoriController) #}
+
+                 <tr>
+                    <th scope="row">{{ element.jeu.0.Title }}</td> {# Ici je dois rappeler la variable jeu et me facolise sur la clé 0, ensuite l'attribut souhaité; le titre en l'occurrence #}   
+                    <td>{{ element.jeu.0.Description }}</td>
+                    <td> <img src="{{'/' ~ element.jeu.0.Image}}" alt="" width="150px" height="150px"></td>
+                    
+                    <td> <a href="{{ element.jeu.0.Url }}"  target="_blank"> voir</a> </td>
                     <td>
-                        <a href="{{path("cart_delete", {id: jeu.id})}}" class="btn btn-danger">
-                            <i class="bi bi-cart-x"></i>
+                        <a href="{{path("delete_favori", {slug: element.jeu.0.slug})}}"class="btn btn-danger" title='delete'>
+                            <i class="bi bi-trash"></i>
                         </a>
                     </td>
-                </tr>
+                </tr> 
             {% else %}
                 <tr>
                     <td colspan="5" class="text-center">Aucun favori</td>
@@ -43,6 +48,10 @@
             {% endfor %}
         </tbody>
     </table>
+  {% else %} 
+  <p> Vous n'avez aucun favori</p>
+  {% endif %} 
 
+</div>
 </div>
 {% endblock %}

@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[UniqueEntity(
     fields: ['utilisateur', 'jeu'],
     errorPath: 'utilisateur',
-    message: 'Un avis a déjà été donné sur ce jeu par vous.'
+    message: 'Vous avez déjà partagé votre avis sur ce jeu.' /* Je ne sais pas trop comment le faire apparaitre ; je suis passée par le controleur et les addFlash */
 )]
 
 class Avis

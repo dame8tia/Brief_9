@@ -3,39 +3,98 @@
 {% block title %}Avis{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-
 
 {% include "header.html.twig" %}
 
 <div class="container">
     <!-- Example row of columns -->
+    
+
+    
+
+    {% if avisJeu is empty %} {# Les avis d'un tulisateur #}
     <div class="row">
+        <h1>Mes avis</h1>
 
-    <h1>Mes avis</h1>
-
-        {% for ligne in avis %}
-        <div class="col-md-3 mt-3 border border-primary p-3 m-3">
-            {# <a href= "{{app.request.uri ~ '/' ~ ligne.slug}}"><h2>{{ligne.title}}</h2></a>             #}
-            <img src="{{'/' ~ ligne.jeu.image}}" alt="" width="150px" height="150px">
-            <p> Commentaire : {{ligne.commentaire}} </p>
-            <p> Note : {{ligne.note}} </p>
-            {# <p> {{ligne.is_valid}} </p> #}
-            <a href=" {{ path('avis.edit', {id: ligne.id}) }} " class="btn btn-info my-3">Modifier</a>
-            <a href=" {{ path('avis.delete', {id: ligne.id}) }} " class="btn btn-info">Supprimer</a>
-            <a href=" {{ path('add_favori', {slug: ligne.jeu.slug}) }} " class="btn btn-info mt-3">Ajouter au favori</a>
+        {% for message in app.flashes('success') %} {# Lors de la suppression d'un avis #}
+        <div class="alert alert-success mt-3">
+            {{ message }}
         </div>
         {% endfor %}
+
+        {% for message in app.flashes('fail') %} {# Lors de la suppression d'un avis #}
+        <div class="alert alert-alert mt-3">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        {% if avis.items is same as ([]) %}
+            <p>Vous n'avez émis aucun avis</p>
+        {% else %}
+            {% for ligne in avis %}
+            <div class="col-md-3 mt-3 border border-primary p-3 m-3">
+                {# <a href= "{{app.request.uri ~ '/' ~ ligne.slug}}"><h2>{{ligne.title}}</h2></a>             #}
+                <img src="{{'/' ~ ligne.jeu.image}}" alt="" width="150px" height="150px">
+                <p> Commentaire : {{ligne.commentaire}} </p>
+                <p> Note : {{ligne.note}} </p>
+                {# <p> {{ligne.is_valid}} </p> #}
+                <a href=" {{ path('avis.edit', {id: ligne.id}) }} " class="btn btn-info my-3">Modifier</a>
+                <a href=" {{ path('avis.delete', {id: ligne.id}) }} " class="btn btn-info">Supprimer</a>
+                
+                <a href=" {{ path('add_favori', {slug: ligne.jeu.slug}) }} " class="btn btn-info mt-3">Ajouter au favori</a>
+            </div>
+            {% endfor %}
+
+            <div class="navigation d-flex justify-content-center mt-3">
+                {{ knp_pagination_render(avis) }}
+            </div>
+        {% endif %}    
+    </div>
+
+    {% else %}
+
+{#         <div class="row"> #}
+        <h1>Tous les avis sur {{ avisJeu }}</h1>
+        {% if avis.items is same as ([]) %}
+            <p>Aucun avis émis</p>
+        {% else %}
+            
+{#             <div class="col m-3"> #}
+                <img src="{{'/' ~ avis.0.jeu.image}}" alt="" width="150px" height="150px">
+{#             </div> #}
+{#             <div class="col"> #}
+                <table class="table">                
+                    <thead class="thead-dark">
+                        <tr>
+                            <td>Utilisateur</td>
+                            <td>Commentaire</td>
+                            <td>Note</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for key, value in avis %}            
+                        <tr> 
+                            <th scope="row">{{value.utilisateur}} </th> 
+                            <td>{{value.commentaire}}</td>
+                            <td>{{value.note}}</td>
+                        </tr>  
+                    {% endfor %}
+                        </tr>
+                            <th scope="row" colspan= "4"> Moyenne à calculer </td>
+                        </tr>
+                    </tbody>
+                </table>
+{#             </div> #}
+{#         </div>    {# fermeture row #}
 
         <div class="navigation d-flex justify-content-center mt-3">
             {{ knp_pagination_render(avis) }}
         </div>
+        {% endif %}    
+
+    {% endif %}
+
         
-    </div>
 
     <hr>
 
