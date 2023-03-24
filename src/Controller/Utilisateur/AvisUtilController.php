@@ -38,7 +38,6 @@ class AvisUtilController extends AbstractController
         $sum = 0;
         $moy = 0 ;
         foreach ($mesAvis as $key => $value){
-            //dd($value, $key);
             $note = $value->getNote();
             $sum = $sum + $note;
             $count +=1 ;
@@ -100,7 +99,7 @@ class AvisUtilController extends AbstractController
         return $this->render('avis/index.html.twig', 
             [
                 'avis'=>$avis,
-                'AvisJeu' =>""
+                'avisJeu' =>""
             ]);
     }
 
