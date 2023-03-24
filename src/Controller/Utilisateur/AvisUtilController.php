@@ -30,10 +30,24 @@ class AvisUtilController extends AbstractController
     {    
 
         $jeu = $jeuRepository->findOneBy(['slug' => $slug]);
-        //dd($jeu);
         $titleJeu = $jeu->getTitle();
+        $mesAvis = $avisRepository->findBy(['jeu'=>$jeu]);
+
+        //calcul de la moyenne
+        $count = 0;
+        $sum = 0;
+        $moy = 0 ;
+        foreach ($mesAvis as $key => $value){
+            //dd($value, $key);
+            $note = $value->getNote();
+            $sum = $sum + $note;
+            $count +=1 ;
+
+            $moy = $sum/$count ;
+        }
+
         $avis = $paginator->paginate(
-            $avis = $avisRepository->findBy(['jeu'=>$jeu]), /* query NOT result */
+            $mesAvis, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             8 /*limit per page*/
         );
@@ -41,8 +55,8 @@ class AvisUtilController extends AbstractController
         return $this->render('avis/index.html.twig', 
             [
                 'avis'=>$avis,
-                'avisJeu' =>$titleJeu
-                
+                'avisJeu' =>$titleJeu,
+                'moy'=> $moy                
             ]);
     }
 

@@ -55,37 +55,36 @@
 
 {#         <div class="row"> #}
         <h1>Tous les avis sur {{ avisJeu }}</h1>
+
         {% if avis.items is same as ([]) %}
+
             <p>Aucun avis émis</p>
+
         {% else %}
-            
-{#             <div class="col m-3"> #}
-                <img src="{{'/' ~ avis.0.jeu.image}}" alt="" width="150px" height="150px">
-{#             </div> #}
-{#             <div class="col"> #}
-                <table class="table">                
-                    <thead class="thead-dark">
-                        <tr>
-                            <td>Utilisateur</td>
-                            <td>Commentaire</td>
-                            <td>Note</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for key, value in avis %}            
-                        <tr> 
-                            <th scope="row">{{value.utilisateur}} </th> 
-                            <td>{{value.commentaire}}</td>
-                            <td>{{value.note}}</td>
-                        </tr>  
-                    {% endfor %}
-                        </tr>
-                            <th scope="row" colspan= "4"> Moyenne à calculer </td>
-                        </tr>
-                    </tbody>
-                </table>
-{#             </div> #}
-{#         </div>    {# fermeture row #}
+
+            <img src="{{'/' ~ avis.0.jeu.image}}" alt="" width="150px" height="150px">
+
+            <table class="table table-striped">                
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Utilisateur</th>
+                        <th scope="col">Commentaire</th>
+                        <th scope="col">Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, value in avis %}            
+                    <tr> 
+                        <th scope="row">{{value.utilisateur}} </th> 
+                        <td>{{value.commentaire}}</td>
+                        <td>{{value.note}}</td>
+                    </tr>  
+                {% endfor %}
+                    </tr>
+                        <th scope="row" colspan= "3" class='text-end'> Moyenne : {{ moy }} </td>
+                    </tr>
+                </tbody>
+            </table>
 
         <div class="navigation d-flex justify-content-center mt-3">
             {{ knp_pagination_render(avis) }}
