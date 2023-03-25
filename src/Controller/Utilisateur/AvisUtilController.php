@@ -83,7 +83,6 @@ class AvisUtilController extends AbstractController
         // On récupère le pseudo de l'utilisateur connecté
         $idUserConnected = $user->getUserIdentifier(); // le mail
         $userEntity = $utilRepo->findOneBy(['email' => $idUserConnected]);
-        
 
         $user = $userEntity->getId();
         
