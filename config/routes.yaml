@@ -4,7 +4,7 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-#homepage:
-#    path: /
-#    controller: App\Controller\AccueilController::index
+homepage:
+    path: /
+    controller: App\Controller\Accueil\AccueilController::index
     #           Espace de nomm\Class::method   // Espace de nommage défini dans le ctrller

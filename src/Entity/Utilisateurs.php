@@ -31,8 +31,7 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 100
-    )]
+    #[ORM\Column(length: 100 )]
     private ?string $pseudo = null;
 
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Avis::class)]

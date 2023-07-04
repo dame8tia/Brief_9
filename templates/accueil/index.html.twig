@@ -11,10 +11,15 @@
     <div class="row">
 
         {% for jeu in lastJeux %}
+        
         <div class="col-md-3">
-            <a href= "{{app.request.uri ~ '/' ~ jeu.slug}}"><h2>{{jeu.title}}</h2></a>            
+            {% if (app.request.attributes.get('_route') == "homepage")%}
+             <a href= "{{app.request.uri~ 'accueil/' ~ jeu.slug}}"><h2>{{jeu.title}}</h2></a>  
+             {% else %}  
+            <a href= "{{app.request.uri~ '/' ~ jeu.slug}}"><h2>{{jeu.title}}</h2></a>            
+             {% endif %}
             <img src="{{'/' ~ jeu.image}}" alt="" width="150px" height="150px">
-            <p> {{jeu.description}} </p>
+            <p> {{jeu.description}} </p>   
             <p><a class="btn btn-secondary" href="{{app.request.uri ~ '/' ~ jeu.slug}}" role="button">voir</a></p>
             <p><a class="btn btn-dark" href="{{ path('avis.tous', {slug: jeu.slug}) }}" role="button">voir tous les avis&raquo;</a></p>
         </div>
@@ -25,7 +30,7 @@
 
     <hr>
 
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 
 {% include "footer.html.twig" %}
